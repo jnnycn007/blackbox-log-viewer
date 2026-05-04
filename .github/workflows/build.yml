@@ -25,21 +25,16 @@ jobs:
           ref: ${{ inputs.commit_ref }}
           persist-credentials: false  # Don't persist GitHub token
 
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules/
-          key: node_modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
       - name: Install node.js
         uses: actions/setup-node@v5
         with:
           node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
 
-      - run: npm install yarn -g
-      - run: yarn install
+      - run: npm ci
       - name: Build
-        run: yarn build
+        run: npm run build
         env:
           DEBUG_BUILD: ${{ inputs.debug_build }}
 
